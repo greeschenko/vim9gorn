@@ -18,7 +18,7 @@ func main() {
 	// =====================
 	// Variables (legacy scopes)
 	// =====================
-	v.Variables.Legacy(vim9gorn.Global, "mapleader", "\"\\<Space>\"")
+	v.Variables.Legacy(vim9gorn.Global, "mapleader", `"<Space>"`)
 	v.Variables.Legacy(vim9gorn.Global, "maplocalleader", "','")
 
 	// =====================
@@ -58,16 +58,39 @@ func main() {
 	greet := vim9gorn.NewFunction("Greet").
 		SetScope(vim9gorn.Global)
 
-	// Створимо if/elseif/else блок
-	timeCheck := vim9gorn.NewIfElse("str2nr(strftime(\"%H\")) < 12").
+	// ---------------------
+	// if / elseif / else
+	// ---------------------
+	timeCheck := vim9gorn.NewIfElse(`str2nr(strftime("%H")) < 12`).
 		ThenAdd(vim9gorn.Raw{Code: `echo "Good morning from vim9gorn 👋"`}).
-		ElseIfAdd("str2nr(strftime(\"%H\")) < 18", vim9gorn.Raw{Code: `echo "Good afternoon from vim9gorn 👋"`}).
+		ElseIfAdd(`str2nr(strftime("%H")) < 18`,
+			vim9gorn.Raw{Code: `echo "Good afternoon from vim9gorn 👋"`},
+		).
 		ElseAdd(vim9gorn.Raw{Code: `echo "Good evening from vim9gorn 👋"`})
 
-	// Додаємо блок в тіло функції
 	greet.Add(timeCheck)
 
-	// Додаємо функцію в секції
+	// ---------------------
+	// for loop with continue & break
+	// ---------------------
+	loop := vim9gorn.NewForLoop("i", "[1, 2, 3, 4, 5]").
+		Add(
+			vim9gorn.NewIfElse("i == 2").
+				ThenAdd(vim9gorn.Raw{Code: "continue"}),
+		).
+		Add(
+			vim9gorn.NewIfElse("i == 4").
+				ThenAdd(vim9gorn.Raw{Code: "break"}),
+		).
+		Add(
+			vim9gorn.Raw{Code: `echo "Loop value: " .. i`},
+		)
+
+	greet.Add(loop)
+
+	// ---------------------
+	// register function
+	// ---------------------
 	v.AddSection(greet)
 
 	// =====================

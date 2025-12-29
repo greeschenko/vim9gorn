@@ -4,13 +4,13 @@ vim9script
 # Do not edit manually
 
 # === Options ===
-set relativenumber
-set tabstop=4
 set wildmenu
 set number
+set relativenumber
+set tabstop=4
 
 # === Variables ===
-g:mapleader = "\<Space>"
+g:mapleader = "<Space>"
 g:maplocalleader = ','
 
 # === Colorscheme ===
@@ -35,6 +35,15 @@ def g:Greet()
   else
     echo "Good evening from vim9gorn 👋"
   endif
+  for i in [1, 2, 3, 4, 5]
+    if i == 2
+      continue
+    endif
+    if i == 4
+      break
+    endif
+    echo "Loop value: " .. i
+  endfor
 enddef
 
 
