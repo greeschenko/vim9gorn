@@ -6,18 +6,29 @@ import (
 )
 
 // =====================
-// ForLoop
+// ForLoop (key/value based)
 // =====================
 type ForLoop struct {
-	VarName  string // loop variable
-	Iterable string // e.g., "range(1,5)" або "[1,2,3]"
+	Key      string // "_" to ignore
+	Value    string // "_" to ignore
+	Iterable string // range(...), list, dict, values(...), keys(...)
 	Body     []CodeBlock
 }
 
 // NewForLoop creates a new ForLoop
-func NewForLoop(varName, iterable string) *ForLoop {
+func NewForLoop(key, value, iterable string) *ForLoop {
+	if key == "_" && value == "_" {
+		panic("ForLoop: at least one variable must be defined")
+	}
+
+	// Invalid: key without value in Vim9
+	if key != "_" && value == "_" {
+		panic("ForLoop: key without value is not supported in Vim9")
+	}
+
 	return &ForLoop{
-		VarName:  varName,
+		Key:      key,
+		Value:    value,
 		Iterable: iterable,
 		Body:     make([]CodeBlock, 0),
 	}
@@ -32,7 +43,24 @@ func (f *ForLoop) Add(block CodeBlock) *ForLoop {
 // Generate generates Vim9 for loop code
 func (f *ForLoop) Generate() string {
 	var b strings.Builder
-	b.WriteString(fmt.Sprintf("for %s in %s\n", f.VarName, f.Iterable))
+
+	b.WriteString("for ")
+
+	switch {
+	case f.Key != "_" && f.Value != "_":
+		b.WriteString(f.Key)
+		b.WriteString(", ")
+		b.WriteString(f.Value)
+	case f.Key == "_" && f.Value != "_":
+		b.WriteString(f.Value)
+	default:
+		panic("ForLoop: invalid key/value combination")
+	}
+
+	b.WriteString(" in ")
+	b.WriteString(f.Iterable)
+	b.WriteByte('\n')
+
 	for _, block := range f.Body {
 		code := block.Generate()
 		lines := strings.Split(code, "\n")
@@ -45,6 +73,7 @@ func (f *ForLoop) Generate() string {
 			b.WriteByte('\n')
 		}
 	}
+
 	b.WriteString("endfor\n")
 	return b.String()
 }
@@ -57,7 +86,6 @@ type WhileLoop struct {
 	Body      []CodeBlock
 }
 
-// NewWhileLoop creates a new WhileLoop
 func NewWhileLoop(cond string) *WhileLoop {
 	return &WhileLoop{
 		Condition: cond,
@@ -65,19 +93,20 @@ func NewWhileLoop(cond string) *WhileLoop {
 	}
 }
 
-// Add adds a CodeBlock to the while loop body
 func (w *WhileLoop) Add(block CodeBlock) *WhileLoop {
 	w.Body = append(w.Body, block)
 	return w
 }
 
-// Generate generates Vim9 while loop code
 func (w *WhileLoop) Generate() string {
 	var b strings.Builder
+
 	b.WriteString(fmt.Sprintf("while %s\n", w.Condition))
+
 	for _, block := range w.Body {
 		code := block.Generate()
 		lines := strings.Split(code, "\n")
+
 		for _, line := range lines {
 			if strings.TrimSpace(line) == "" {
 				continue
@@ -87,6 +116,7 @@ func (w *WhileLoop) Generate() string {
 			b.WriteByte('\n')
 		}
 	}
+
 	b.WriteString("endwhile\n")
 	return b.String()
 }
