@@ -1,0 +1,2 @@
+# Vendor directory (if using Go modules)
+vendor/
