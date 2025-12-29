@@ -71,10 +71,12 @@ func main() {
 	greet.Add(timeCheck)
 
 	// ---------------------
-	// for loop with continue & break
+	// for loop with continue & break using List
 	// ---------------------
-	loop := vim9gorn.NewForLoop("i", "[1, 2, 3, 4, 5]").
-		Add(
+	numbers := vim9gorn.NewList("1", "2", "3", "4", "5") // List from collections.go
+
+	loop := vim9gorn.NewForLoop("_", "i", numbers.Generate()). // key = nil, value = "i"
+									Add(
 			vim9gorn.NewIfElse("i == 2").
 				ThenAdd(vim9gorn.Raw{Code: "continue"}),
 		).
@@ -87,6 +89,19 @@ func main() {
 		)
 
 	greet.Add(loop)
+
+	// ---------------------
+	// for loop over Dict keys/values
+	// ---------------------
+	myDict := vim9gorn.NewDict().
+		Set("a", `"Apple"`).
+		Set("b", `"Banana"`).
+		Set("c", `"Cherry"`)
+
+	dictLoop := vim9gorn.NewForLoop("k", "v", vim9gorn.Items(myDict)).
+		Add(vim9gorn.Raw{Code: `echo k .. ": " .. v`})
+
+	greet.Add(dictLoop)
 
 	// ---------------------
 	// register function

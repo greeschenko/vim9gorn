@@ -44,6 +44,9 @@ def g:Greet()
     endif
     echo "Loop value: " .. i
   endfor
+  for [k, v] in items({"a": "Apple", "b": "Banana", "c": "Cherry"})
+    echo k .. ": " .. v
+  endfor
 enddef
 
 

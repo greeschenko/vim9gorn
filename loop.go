@@ -48,9 +48,11 @@ func (f *ForLoop) Generate() string {
 
 	switch {
 	case f.Key != "_" && f.Value != "_":
+		b.WriteString("[")
 		b.WriteString(f.Key)
 		b.WriteString(", ")
 		b.WriteString(f.Value)
+		b.WriteString("]")
 	case f.Key == "_" && f.Value != "_":
 		b.WriteString(f.Value)
 	default:
