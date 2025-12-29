@@ -28,7 +28,13 @@ nmap <silent> <esc> :nohlsearch<return>
 vmap < <gv
 vmap > >gv
 def g:Greet()
-  echo "Hello from vim9gorn 👋"
+  if str2nr(strftime("%H")) < 12
+    echo "Good morning from vim9gorn 👋"
+  elseif str2nr(strftime("%H")) < 18
+    echo "Good afternoon from vim9gorn 👋"
+  else
+    echo "Good evening from vim9gorn 👋"
+  endif
 enddef
 
 

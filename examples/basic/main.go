@@ -56,11 +56,18 @@ func main() {
 	// Function (Vim9)
 	// =====================
 	greet := vim9gorn.NewFunction("Greet").
-		SetScope(vim9gorn.Global).
-		Add(vim9gorn.Raw{
-			Code: `echo "Hello from vim9gorn 👋"`,
-		})
+		SetScope(vim9gorn.Global)
 
+	// Створимо if/elseif/else блок
+	timeCheck := vim9gorn.NewIfElse("str2nr(strftime(\"%H\")) < 12").
+		ThenAdd(vim9gorn.Raw{Code: `echo "Good morning from vim9gorn 👋"`}).
+		ElseIfAdd("str2nr(strftime(\"%H\")) < 18", vim9gorn.Raw{Code: `echo "Good afternoon from vim9gorn 👋"`}).
+		ElseAdd(vim9gorn.Raw{Code: `echo "Good evening from vim9gorn 👋"`})
+
+	// Додаємо блок в тіло функції
+	greet.Add(timeCheck)
+
+	// Додаємо функцію в секції
 	v.AddSection(greet)
 
 	// =====================
