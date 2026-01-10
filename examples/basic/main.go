@@ -1,30 +1,36 @@
 package main
 
 import (
-	"github.com/greeschenko/vim9gorn"
+	vi "github.com/greeschenko/vim9gorn"
 )
 
 func main() {
-	v := vim9gorn.New()
+	v := vi.New()
 
 	// =====================
 	// Options
 	// =====================
-	v.Options.Set("wildmenu", true)
-	v.Options.Set("number", true)
-	v.Options.Set("relativenumber", true)
-	v.Options.Set("tabstop", 4)
+	v.AddSection(
+		vi.NewOptions().
+			Set("wildmenu", true).
+			Set("number", true).
+			Set("relativenumber", true).
+			Set("tabstop", 4),
+	)
 
 	// =====================
 	// Variables (legacy scopes)
 	// =====================
-	v.Variables.Legacy(vim9gorn.Global, "mapleader", `"<Space>"`)
-	v.Variables.Legacy(vim9gorn.Global, "maplocalleader", "','")
+	v.AddSection(
+		vi.NewVariables().
+			Legacy(vi.Global, "mapleader", `"<Space>"`).
+			Legacy(vi.Global, "maplocalleader", "','"),
+	)
 
 	// =====================
 	// Colorscheme
 	// =====================
-	v.AddSection(vim9gorn.ColorScheme{
+	v.AddSection(vi.ColorScheme{
 		Background:    "dark",
 		TermGuiColors: true,
 		SyntaxEnable:  true,
@@ -34,8 +40,8 @@ func main() {
 	// =====================
 	// Highlights
 	// =====================
-	v.AddSection(vim9gorn.Highlight{LinkFrom: "Extra", LinkTo: "Comment"})
-	v.AddSection(vim9gorn.Highlight{
+	v.AddSection(vi.Highlight{LinkFrom: "Extra", LinkTo: "Comment"})
+	v.AddSection(vi.Highlight{
 		Group: "Git",
 		Args:  "guibg=#F34F29 guifg=#FFFFFF ctermbg=202 ctermfg=231",
 	})
@@ -43,49 +49,49 @@ func main() {
 	// =====================
 	// Keymaps
 	// =====================
-	v.AddSection(vim9gorn.Keymap{
+	v.AddSection(vi.Keymap{
 		Mode: "n", LHS: "<leader>vl", RHS: "^v$h",
 	})
-	v.AddSection(vim9gorn.Keymap{
+	v.AddSection(vi.Keymap{
 		Mode: "n", LHS: "<esc>", RHS: ":nohlsearch<return>", Silent: true,
 	})
-	v.AddSection(vim9gorn.Keymap{Mode: "v", LHS: "<", RHS: "<gv"})
-	v.AddSection(vim9gorn.Keymap{Mode: "v", LHS: ">", RHS: ">gv"})
+	v.AddSection(vi.Keymap{Mode: "v", LHS: "<", RHS: "<gv"})
+	v.AddSection(vi.Keymap{Mode: "v", LHS: ">", RHS: ">gv"})
 
 	// =====================
 	// Function (Vim9)
 	// =====================
-	greet := vim9gorn.NewFunction("Greet").
-		SetScope(vim9gorn.Global)
+	greet := vi.NewFunction("Greet").
+		SetScope(vi.Global)
 
 	// ---------------------
 	// if / elseif / else
 	// ---------------------
-	timeCheck := vim9gorn.NewIfElse(`str2nr(strftime("%H")) < 12`).
-		ThenAdd(vim9gorn.Raw{Code: `echo "Good morning from vim9gorn 👋"`}).
+	timeCheck := vi.NewIfElse(`str2nr(strftime("%H")) < 12`).
+		ThenAdd(vi.Raw{Code: `echo "Good morning from vim9gorn 👋"`}).
 		ElseIfAdd(`str2nr(strftime("%H")) < 18`,
-			vim9gorn.Raw{Code: `echo "Good afternoon from vim9gorn 👋"`},
+			vi.Raw{Code: `echo "Good afternoon from vim9gorn 👋"`},
 		).
-		ElseAdd(vim9gorn.Raw{Code: `echo "Good evening from vim9gorn 👋"`})
+		ElseAdd(vi.Raw{Code: `echo "Good evening from vim9gorn 👋"`})
 
 	greet.Add(timeCheck)
 
 	// ---------------------
 	// for loop with continue & break using List
 	// ---------------------
-	numbers := vim9gorn.NewList("1", "2", "3", "4", "5") // List from collections.go
+	numbers := vi.NewList("1", "2", "3", "4", "5")
 
-	loop := vim9gorn.NewForLoop("_", "i", numbers.Generate()). // key = nil, value = "i"
-									Add(
-			vim9gorn.NewIfElse("i == 2").
-				ThenAdd(vim9gorn.Raw{Code: "continue"}),
+	loop := vi.NewForLoop("_", "i", numbers.Generate()).
+		Add(
+			vi.NewIfElse("i == 2").
+				ThenAdd(vi.Raw{Code: "continue"}),
 		).
 		Add(
-			vim9gorn.NewIfElse("i == 4").
-				ThenAdd(vim9gorn.Raw{Code: "break"}),
+			vi.NewIfElse("i == 4").
+				ThenAdd(vi.Raw{Code: "break"}),
 		).
 		Add(
-			vim9gorn.Raw{Code: `echo "Loop value: " .. i`},
+			vi.Raw{Code: `echo "Loop value: " .. i`},
 		)
 
 	greet.Add(loop)
@@ -93,13 +99,13 @@ func main() {
 	// ---------------------
 	// for loop over Dict keys/values
 	// ---------------------
-	myDict := vim9gorn.NewDict().
+	myDict := vi.NewDict().
 		Set("a", `"Apple"`).
 		Set("b", `"Banana"`).
 		Set("c", `"Cherry"`)
 
-	dictLoop := vim9gorn.NewForLoop("k", "v", vim9gorn.Items(myDict)).
-		Add(vim9gorn.Raw{Code: `echo k .. ": " .. v`})
+	dictLoop := vi.NewForLoop("k", "v", vi.Items(myDict)).
+		Add(vi.Raw{Code: `echo k .. ": " .. v`})
 
 	greet.Add(dictLoop)
 
@@ -111,7 +117,7 @@ func main() {
 	// =====================
 	// Forge
 	// =====================
-	writer := &vim9gorn.DefaultFileWriter{}
+	writer := &vi.DefaultFileWriter{}
 	if err := v.Forge(".vimrc", writer); err != nil {
 		panic(err)
 	}

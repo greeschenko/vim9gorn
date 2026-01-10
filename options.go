@@ -17,8 +17,9 @@ func NewOptions() *Options {
 }
 
 // Set додає/оновлює option
-func (o *Options) Set(name string, value any) {
+func (o *Options) Set(name string, value any) *Options {
 	o.data[name] = value
+	return o
 }
 
 // Generate повертає блок налаштувань у форматі vim9script

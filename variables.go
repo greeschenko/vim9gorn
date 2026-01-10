@@ -52,51 +52,56 @@ func NewVariables() *Variables {
 //
 
 // Var додає script-local змінну (vim9: var)
-func (v *Variables) Var(name, value string) {
+func (v *Variables) Var(name, value string) *Variables {
 	v.data = append(v.data, Variable{
 		Kind:  VarScript,
 		Name:  name,
 		Value: value,
 	})
+	return v
 }
 
 // VarTyped додає script-local змінну з типом
-func (v *Variables) VarTyped(name, typ, value string) {
+func (v *Variables) VarTyped(name, typ, value string) *Variables {
 	v.data = append(v.data, Variable{
 		Kind:  VarScript,
 		Name:  name,
 		Type:  typ,
 		Value: value,
 	})
+	return v
 }
 
 // Const додає константу (vim9: const)
-func (v *Variables) Const(name, value string) {
+func (v *Variables) Const(name, value string) *Variables {
 	v.data = append(v.data, Variable{
 		Kind:  ConstScript,
 		Name:  name,
 		Value: value,
 	})
+	return v
 }
 
 // ConstTyped додає константу з типом
-func (v *Variables) ConstTyped(name, typ, value string) {
+func (v *Variables) ConstTyped(name, typ, value string) *Variables {
 	v.data = append(v.data, Variable{
 		Kind:  ConstScript,
 		Name:  name,
 		Type:  typ,
 		Value: value,
 	})
+	return v
 }
 
 // Legacy додає legacy-змінну з префіксом (g:, b:, w:, t:)
-func (v *Variables) Legacy(scope Scope, name, value string) {
+func (v *Variables) Legacy(scope Scope, name, value string) *Variables {
 	v.data = append(v.data, Variable{
 		Kind:  VarLegacy,
 		Scope: scope,
 		Name:  name,
 		Value: value,
 	})
+	return v
 }
 
 //

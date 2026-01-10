@@ -4,10 +4,10 @@ vim9script
 # Do not edit manually
 
 # === Options ===
-set wildmenu
 set number
 set relativenumber
 set tabstop=4
+set wildmenu
 
 # === Variables ===
 g:mapleader = "<Space>"
