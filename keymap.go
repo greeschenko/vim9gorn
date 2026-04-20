@@ -9,10 +9,14 @@ type Keymap struct {
 	LHS    string
 	RHS    string
 	Silent bool
+	Nor    bool
 }
 
 func (k Keymap) Generate() string {
 	cmd := k.Mode + "map"
+	if k.Nor {
+		cmd = k.Mode + "noremap"
+	}
 	if k.Silent {
 		cmd += " <silent>"
 	}
