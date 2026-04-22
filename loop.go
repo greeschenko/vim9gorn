@@ -135,3 +135,35 @@ type Continue struct{}
 
 func NewContinue() *Continue         { return &Continue{} }
 func (c *Continue) Generate() string { return "continue" }
+
+// =====================
+// Range expression
+// =====================
+type RangeExpr struct {
+	Start int
+	End   int
+	Step  int
+}
+
+func NewRange(start, end int) *RangeExpr {
+	return &RangeExpr{
+		Start: start,
+		End:   end,
+		Step:  0,
+	}
+}
+
+func NewRangeWithStep(start, end, step int) *RangeExpr {
+	return &RangeExpr{
+		Start: start,
+		End:   end,
+		Step:  step,
+	}
+}
+
+func (r *RangeExpr) Generate() string {
+	if r.Step > 0 {
+		return fmt.Sprintf("range(%d, %d, %d)", r.Start, r.End, r.Step)
+	}
+	return fmt.Sprintf("range(%d, %d)", r.Start, r.End)
+}

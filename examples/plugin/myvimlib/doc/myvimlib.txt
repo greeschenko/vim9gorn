@@ -1,0 +1,6 @@
+* myvimlib.txt *
+
+myvimlib(1)    myvimlib
+
+DESCRIPTION
+My Vim Library

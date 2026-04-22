@@ -90,3 +90,19 @@ func TestContinue(t *testing.T) {
 		t.Errorf("Continue = %q, want %q", got, expect)
 	}
 }
+
+func TestRange(t *testing.T) {
+	r := NewRange(1, 10)
+	expect := "range(1, 10)"
+	if got := r.Generate(); got != expect {
+		t.Errorf("Range = %q, want %q", got, expect)
+	}
+}
+
+func TestRangeWithStep(t *testing.T) {
+	r := NewRangeWithStep(0, 100, 5)
+	expect := "range(0, 100, 5)"
+	if got := r.Generate(); got != expect {
+		t.Errorf("RangeWithStep = %q, want %q", got, expect)
+	}
+}
