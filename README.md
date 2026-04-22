@@ -1,5 +1,7 @@
 # vim9gorn
 
+[![CI](https://github.com/greeschenko/vim9gorn/actions/workflows/ci.yml/badge.svg)](https://github.com/greeschenko/vim9gorn/actions/workflows/ci.yml)
+
 vim9gorn is a Go library for generating Vim9Script configurations and plugins programmatically.
 
 ## Features
@@ -17,6 +19,12 @@ vim9gorn is a Go library for generating Vim9Script configurations and plugins pr
 - **Plugin Structure** — scaffold `plugin/`, `autoload/`, `ftplugin/` directories
 - **Plugin Manager** — fetch/update external plugins (git clone)
 - **Fluent API** — chainable method calls
+
+## Requirements
+
+- Go 1.24+
+- Git (for plugin manager)
+- Vim 9+ (for validation tests)
 
 ## Installation
 
@@ -221,7 +229,10 @@ go build -o vim9gorn ./cmd/vim9gorn
 ```bash
 go test ./...
 go test -v -run TestGenerateUserVimrc  # Run integration test
+go test -v -run TestValidateGeneratedVimrcWithVim  # Validate with Vim
 ```
+
+> **Note:** Vim must be installed for the validation test (`sudo apt-get install vim`)
 
 ## Project Structure
 
