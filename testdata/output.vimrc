@@ -66,7 +66,7 @@ g:vimsidian_vault_path = "~/prodev/MIND_VAULT"
 
 
 # === Variables ===
-var plugin_list = [greeschenko/cyberpunk99.vim, yegappan/lsp, liuchengxu/vim-which-key, mg979/vim-visual-multi, SirVer/ultisnips, honza/vim-snippets, vim-fuzzbox/fuzzbox.vim, greeschchenko/vim9-ollama]
+var plugin_list = ["greeschenko/cyberpunk99.vim", "yegappan/lsp", "liuchengxu/vim-which-key", "mg979/vim-visual-multi", "SirVer/ultisnips", "honza/vim-snippets", "vim-fuzzbox/fuzzbox.vim", "greeschenko/vim9-ollama"]
 
 
 def g:SetupPlugins()
@@ -85,33 +85,33 @@ enddef
 command PluginsInstall call.SetupPlugins()
 command PluginsUpdate call.UpdatePlugins()
 # === Options ===
-set hlsearch
-set expandtab
-set termguicolors
-set number
-set autoread
-set termencoding=utf-8
-set encoding=utf-8
-set tabstop=4
-set smoothscroll
-set smartindent
-set autoindent
-set nobackup
-set noswapfile
-set background=dark
-set timeoutlen=100
-set nocursorcolumn
-set nocursorline
-set maxmempattern=5000
-set incsearch
-set shiftwidth=4
-set softtabstop=4
-set ttyfast
-set laststatus=2
-set hidden
 set nowrap
 set wildmenu
+set autoread
+set termencoding=utf-8
+set shiftwidth=4
+set timeoutlen=100
+set autoindent
+set nobackup
+set encoding=utf-8
+set softtabstop=4
+set ttyfast
+set background=dark
+set nocursorline
+set noswapfile
+set incsearch
+set expandtab
+set tabstop=4
+set laststatus=2
+set termguicolors
+set smoothscroll
+set smartindent
+set number
 set clipboard=unnamed,unnamedplus
+set hlsearch
+set nocursorcolumn
+set hidden
+set maxmempattern=5000
 
 
 # === Colorscheme ===
@@ -186,7 +186,7 @@ nmap <silent> <leader>lep :LspDiagPrev<CR>
 nmap <silent> <leader>lel :LspDiagShow<CR>
 nmap <silent> <leader>lf :LspFormat<CR>
 nmap <leader>e :Explore<CR>
-def main()
+def g:Main()
   SetupPlugins()
 enddef
 

@@ -1,6 +1,8 @@
 package vim9gorn_test
 
 import (
+	"os"
+	"os/exec"
 	"strings"
 	"testing"
 
@@ -98,9 +100,9 @@ func TestGenerateUserVimrc(t *testing.T) {
 			Legacy(vi.Global, "vimsidian_vault_path", `"~/prodev/MIND_VAULT"`),
 	)
 
-	// Plugin list
+	// Plugin list - strings must be quoted in vim9script
 	pluginList := vi.NewVariables().
-		Var("plugin_list", `[greeschenko/cyberpunk99.vim, yegappan/lsp, liuchengxu/vim-which-key, mg979/vim-visual-multi, SirVer/ultisnips, honza/vim-snippets, vim-fuzzbox/fuzzbox.vim, greeschchenko/vim9-ollama]`)
+		Var("plugin_list", `["greeschenko/cyberpunk99.vim", "yegappan/lsp", "liuchengxu/vim-which-key", "mg979/vim-visual-multi", "SirVer/ultisnips", "honza/vim-snippets", "vim-fuzzbox/fuzzbox.vim", "greeschenko/vim9-ollama"]`)
 
 	// SetupPlugins function
 	setupPlugins := vi.NewFunction("SetupPlugins").
@@ -270,7 +272,8 @@ func TestGenerateUserVimrc(t *testing.T) {
 	// AUTOINSTALL
 	// -----------------------------
 
-	autoInstall := vi.NewFunction("main").
+	autoInstall := vi.NewFunction("Main").
+		SetScope(vi.Global).
 		Add(vi.Raw{Code: "SetupPlugins()"})
 
 	g.AddSection(autoInstall)
@@ -332,4 +335,65 @@ func TestGenerateUserVimrc(t *testing.T) {
 	}
 
 	t.Logf("Generated vimrc length: %d bytes", len(output))
+}
+
+func TestValidateGeneratedVimrcWithVim(t *testing.T) {
+	// Skip if vim is not installed
+	_, err := exec.LookPath("vim")
+	if err != nil {
+		t.Skip("vim not installed, skipping validation test")
+	}
+
+	// Read generated vimrc
+	content, err := os.ReadFile("testdata/output.vimrc")
+	if err != nil {
+		t.Fatalf("Failed to read generated vimrc: %v", err)
+	}
+
+	// Split into lines and filter out plugin-dependent code
+	// (which_key, packadd, etc. require plugins to be loaded)
+	var filteredLines []string
+	skipPatterns := []string{
+		"which_key#",
+		"packadd",
+		"LspOptionsSet",
+		"LspAddServer",
+	}
+
+	lines := strings.Split(string(content), "\n")
+	for _, line := range lines {
+		skip := false
+		for _, pattern := range skipPatterns {
+			if strings.Contains(line, pattern) {
+				skip = true
+				break
+			}
+		}
+		if !skip {
+			filteredLines = append(filteredLines, line)
+		}
+	}
+
+	// Write filtered vimrc to temp file
+	filteredContent := strings.Join(filteredLines, "\n")
+	tmpFile, err := os.CreateTemp("", "vimrc-*.vim")
+	if err != nil {
+		t.Fatalf("Failed to create temp file: %v", err)
+	}
+	defer os.Remove(tmpFile.Name())
+
+	if _, err := tmpFile.WriteString(filteredContent); err != nil {
+		t.Fatalf("Failed to write temp file: %v", err)
+	}
+	tmpFile.Close()
+
+	// Run vim in silent ex mode to validate
+	cmd := exec.Command("vim", "-es", "-u", "NONE", "-c", "source "+tmpFile.Name(), "-c", "q")
+	output, err := cmd.CombinedOutput()
+
+	if err != nil {
+		t.Errorf("Vim failed to parse generated vimrc: %v\nOutput: %s", err, output)
+	}
+
+	t.Log("Vim validation passed (filtered for plugin-dependent code)")
 }
