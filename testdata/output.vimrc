@@ -85,33 +85,33 @@ enddef
 command PluginsInstall call.SetupPlugins()
 command PluginsUpdate call.UpdatePlugins()
 # === Options ===
-set nowrap
+set hidden
+set encoding=utf-8
+set incsearch
+set hlsearch
+set expandtab
+set shiftwidth=4
+set ttyfast
+set termguicolors
+set timeoutlen=100
 set wildmenu
 set autoread
-set termencoding=utf-8
-set shiftwidth=4
-set timeoutlen=100
-set autoindent
-set nobackup
-set encoding=utf-8
-set softtabstop=4
-set ttyfast
-set background=dark
-set nocursorline
 set noswapfile
-set incsearch
-set expandtab
-set tabstop=4
-set laststatus=2
-set termguicolors
+set softtabstop=4
 set smoothscroll
-set smartindent
-set number
-set clipboard=unnamed,unnamedplus
-set hlsearch
+set autoindent
 set nocursorcolumn
-set hidden
+set nocursorline
+set number
+set nowrap
+set clipboard=unnamed,unnamedplus
+set laststatus=2
 set maxmempattern=5000
+set nobackup
+set termencoding=utf-8
+set tabstop=4
+set background=dark
+set smartindent
 
 
 # === Colorscheme ===

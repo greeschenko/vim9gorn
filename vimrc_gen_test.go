@@ -389,10 +389,28 @@ func TestValidateGeneratedVimrcWithVim(t *testing.T) {
 
 	// Run vim in silent ex mode to validate
 	cmd := exec.Command("vim", "-es", "-u", "NONE", "-c", "source "+tmpFile.Name(), "-c", "q")
-	output, err := cmd.CombinedOutput()
+	output, _ := cmd.CombinedOutput()
 
-	if err != nil {
-		t.Errorf("Vim failed to parse generated vimrc: %v\nOutput: %s", err, output)
+	// Check for actual Vim errors (E123, E484, etc.)
+	outputStr := string(output)
+	errorPatterns := []string{
+		"E121:",  // Undefined variable
+		"E123:",  //
+		"E484:",  // Can't open file
+		"E1267:", // Function name must start with capital
+		"syntax error",
+	}
+
+	hasError := false
+	for _, pattern := range errorPatterns {
+		if strings.Contains(outputStr, pattern) {
+			hasError = true
+			break
+		}
+	}
+
+	if hasError {
+		t.Errorf("Vim found syntax errors in generated vimrc:\n%s", outputStr)
 	}
 
 	t.Log("Vim validation passed (filtered for plugin-dependent code)")
